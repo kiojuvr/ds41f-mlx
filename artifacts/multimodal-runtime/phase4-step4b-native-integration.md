@@ -126,8 +126,10 @@ stale-root exclusion, C>0 reuse, surviving historical Vision and reacquisition a
 `persisted-00.json` was read after failure/CLI flush using the retained official
 **read-only persistence handle and Session projection**, without running an Agent
 or adding an event. It verifies the same Session/header/current projection and no
-compaction. The original compressed official storage is retained under
-`session-storage/`; its digest is in `cleanup.json`. Source identities remain the
+compaction. The original compressed official storage was captured under
+`session-storage/`; cleanup removed that private runtime state from the current
+tree. Its digest remains in `cleanup.json`, and Git history at `0ba382a` retains
+the original bytes. Source identities remain the
 existing nine-source manifest; there are **no actual attachment/File identities**.
 
 ## Execution ceilings and resource observations

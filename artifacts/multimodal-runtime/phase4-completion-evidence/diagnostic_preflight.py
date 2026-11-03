@@ -14,7 +14,9 @@ with tempfile.TemporaryDirectory(prefix='ds41f-phase4-inspector-test-') as td:
    with tarfile.open(PARENT/'phase4-integrated-evidence/official-session.tar.gz') as tar:tar.extractall(temp,filter='data')
    sid='session-91663bd1-4ee1-4e07-8568-757a381cd94c'
   else:
-   shutil.copytree(PARENT/'phase3-step3br3-evidence/session-storage',temp/'home/sessions')
+   # Private runtime state is no longer tracked; replay requires an external copy.
+   storage=Path(os.environ['DS41F_REPLAY_SESSION_STORAGE'])
+   shutil.copytree(storage,temp/'home/sessions')
    sid='session-6c57807d-625b-43c4-8790-d8b11afc3a79'
   def hashes():return {str(p.relative_to(temp)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (temp/'home/sessions').rglob('*.zstd')}
   before=hashes()

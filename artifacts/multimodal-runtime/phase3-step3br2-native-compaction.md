@@ -223,7 +223,10 @@ with official Session machinery. `persisted-03.json` proves the failed start/end
 are durable, every observed original event is intact, and old/new projected
 messages/nodes are **identical** to `persisted-02.json`. All original tool identities,
 system head, images and tail remain projected; nothing was shadowed. Actual
-physical official storage is retained in `session-storage/` before root deletion.
+physical official storage was captured in `session-storage/` before root deletion.
+The cleanup removed that private runtime state from the current tree; its digests
+remain in `cleanup.json` and the original bytes remain in Git history at
+`0ba382a`. Persisted projections and the recorded failure evidence remain here.
 This verifies durable **failure**, not successful compaction durability.
 
 No changed-projection request, stale-prefix exclusion, reconstruction after

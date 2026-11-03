@@ -200,8 +200,11 @@ exact official generated checkpoint is present, protected system and retained
 tail remain, and original tool identities/results remain associated. Surviving
 tool groups are empty because both complete groups were shadowed, not replayed.
 The latest adopted Session snapshot again contains the same completed transaction.
-Physical official storage is retained in `session-storage/` before deleting the
-disposable roots. This is persistence/adoption evidence, not just in-memory events.
+Physical official storage was captured in `session-storage/` before deleting the
+disposable roots. The cleanup removed this private runtime state from the current
+tree; `cleanup.json` retains its digests and Git history at `0ba382a` retains the
+original bytes. Persisted projections and adoption receipts remain here. This is
+recorded persistence/adoption evidence, not just in-memory events.
 
 `compaction-result.json` includes both prior and replacement official Messages
 projections, selection, source relationships and independently recomputed installed
