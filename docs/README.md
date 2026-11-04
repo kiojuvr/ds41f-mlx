@@ -29,6 +29,11 @@ operation. No further development phase or campaign is selected.
 
 ## Retained evidence
 
+The [upstream performance audit](upstream-performance-audit.md) compares the actual
+patched runtime with DwarfStar, oMLX through 0.7.4.dev1 and DeepInfer at the
+2026-11-04 cutoff. It is investigation evidence and decision options, not an
+approved optimization plan or dependency upgrade.
+
 The [official Harness 0.2.2-alpha.2 Native Messages audit](../artifacts/harness-alpha2-compatibility/report.md)
 preserves source/installed identities, the compatibility matrix, dynamic-tool gaps
 and prior rc.2 execution evidence. It is source-scoped evidence and recommendations,
