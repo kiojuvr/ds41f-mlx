@@ -254,6 +254,15 @@ upload remain unsupported. Exact execution identities,
 configuration revisions, evidence and source-tag/binary-provenance limits belong
 to that report.
 
+The later [official rc.1 audit/E2E](../artifacts/harness-rc1-compatibility/report.md)
+uses an isolated copy of the installed Runtime with unmodified official npm
+**0.2.2-rc.1**. The bounded Native Web lane passes, including retained images,
+stale-ID recovery after Harness restart and harmless Tool cancellation. No Runtime
+production configuration change is required by those results; retain `addition-only`,
+disabled Session-log upload, explicit route capacities and a Harness-supported Node
+(>=24.9). This is not Windows Desktop, complete Plugin lifecycle or runtime-restart
+Files qualification, and does not authorize promotion or admission changes.
+
 Later [Gate F0](../artifacts/harness-files/gate-f0-report.md) demonstrated bounded
 real-model official File-ID/nested-tool-result transport on macOS. The
 [repaired Visual Loop](../artifacts/repaired-visual-loop/report.md) subsequently

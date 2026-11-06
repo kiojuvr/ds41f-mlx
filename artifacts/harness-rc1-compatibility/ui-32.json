@@ -1,0 +1,1317 @@
+{
+  "seq": 32,
+  "url": "http://127.0.0.1:18197/",
+  "error": null,
+  "text": "New Session\n⌥\n⌘\nN\nPlugins\nAutomation tasks\nMore\nWorkspaces\nDefault workspace\nReply RC1_TEXT_OK. Do not use\nnow\nMore\nReply RC1_TEXT_OK. Do not use\nacceptance\nChat\nTrajectory\nLoad earlier\nCall late_receipt once, then baseline_receipt once in a later step (not in parallel). Report both receipts.\n01:33\nCompleted\nCompleted in 6s\nlate_receipt: LATE-927\nbaseline_receipt: BOOT-438\nUsage 1.7K tok\n01:33\nCall late_receipt once now that baseline_receipt is unavailable; report the receipt.\n01:33\nCompleted\nCompleted in 5s\n\nlate_receipt: LATE-927\n\nUsage 1.2K tok\n01:33\nContinue the restored conversation: call late_receipt once and report it.\n01:34\nCompleted\nCompleted in 3s\n\nlate_receipt: LATE-927\n\nUsage 1.4K tok\n01:34\nPlease apply /receipt to return its skill receipt.\n01:34\nCompleted\nCompleted in 5s\n\nSKILL-ALPHA-614\n\nUsage 1.7K tok\n01:34\nUse the skill tool to load receipt and apply its instruction.\n01:35\nCompleted\nCompleted in 4s\n\nSKILL-ALPHA-614\n\nUsage 3.7K tok\n01:35\nUse skill receipt-next, the new replacement skill, and return its receipt.\n01:35\nCompleted\nCompleted in 5s\n\nSKILL-BETA-827\n\nUsage 4.3K tok\n01:35\nDescribe the attached image: color, shape, and printed code. Do not call tools.\n01:35\nCompleted\nCompleted in 4s\nColor: blue\nShape: triangle (pointing up)\nPrinted code: AX-31\nUsage 2.6K tok\n01:35\nCompare the new image to the earlier attachment. Give both printed codes and shapes. Then call late_receipt exactly once and report the receipt.\n01:36\nCompleted\nCompleted in 6s\nEarlier (image-A.png): code AX-31, blue triangle\nNew (image-B.png): code BX-72, orange square\n\nReceipt: LATE-927\n\nUsage 6.1K tok\n01:36\nWithout reading or uploading any images again, list the two image codes retained in this conversation. Do not use tools.\n01:36\nCompleted\nCompleted in 3s\nAX-31 (blue triangle) — image-A.png\nBX-72 (orange square) — image-B.png\nUsage 3.1K tok\n01:36\nUse read_image once on /tmp/ds41f-rc1-e2e/workspace/image-A.png and confirm its printed code.\n01:36\nCompleted\nCompleted in 6s\n\nConfirmed: printed code is AX-31 (blue triangle).\n\nUsage 6.8K tok\n01:36\nIdentify the attached image code. Do not use tools or reread any files.\n01:36\nCompleted\nCompleted in 10s\n\nBX-72\n\n01:37\nContinue using the retained image attachments without calling tools. State the most recent image color, shape, and code.\n01:37\nCompleted\nCompleted in 3s\n\nOrange square, code BX-72.\n\nUsage 3.8K tok\n01:37\ncompact\nCompacted 53 history items (~1993 tokens)\nContinue after compaction. State the two distinct image codes and call late_receipt exactly once, then report the receipt.\n01:38\nCompleted\nCompleted in 7s\n\nThe two distinct image codes are AX-31 (blue triangle) and BX-72 (orange square).\n\nlate_receipt → LATE-927\n\nUsage 4.6K tok\n01:38\nIdentify this fresh attachment color, shape, and printed code. Do not use tools.\n01:38\nCompleted\nCompleted in 1s\n\nBlue triangle, code AX-31.\n\nUsage 2.7K tok\n01:38\n/goal Call late_receipt once, then mark this goal complete using update_goal. Do not create other goals or do any other work.\ngoal\nGoal created Status: active Objective: Call late_receipt once, then mark this goal complete using update_goal. Do not create other goals or do any other work. Rounds: 0/2 Activation: armed Commands: /goal edit <objective>, /goal pause, /goal clear\nContinuing goal\n01:38\nCompleted\nCompleted in 12s\n\nDone. I called late_receipt exactly once this round; it returned LATE-927. I then read the current goal (id goal-a2b33ea3-d792-47ff-9c0f-fc551b99bcca, revision 1, phase active) and marked it complete via update_goal (now revision 2, phase complete).\n\nNo files, commits, or other artifacts were produced — the objective was only the receipt call plus goal closure. Nothing else was done, per your instruction.\n\nNote for review: LATE-927 matches the value returned by earlier late_receipt calls in this session, so there's nothing novel to inspect there. Further work waits for your next instruction.\n\nUsage 12.4K tok\n01:38\nWithout tools, count upward from 1 to 10000, printing every number separated by spaces. Do not summarize or stop early.\n01:39\nStopped\nStopped\nThe counting turn was cancelled. Do not resume it. Reply exactly CANCEL_RECOVERY_OK and do not call tools.\n01:39\nCompleted\nCompleted in 3s\n\nCANCEL_RECOVERY_OK\n\nUsage 3.6K tok\n01:39\nMessage or run a task, / commands, @ files or sessions\nRead Only\nFlash-1017 isolated rc1 audit\nOff\n20 turns 33 steps·57 tok/s\n64.6K tok·Cache hit 83%\n11%",
+  "controls": [
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "New session",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Collapse sidebar",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "New session",
+      "text": "New Session\n⌥\n⌘\nN"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Plugins",
+      "text": "Plugins"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Automation tasks",
+      "text": "Automation tasks"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "More",
+      "text": "More"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Search sessions",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "role": null,
+      "placeholder": "Search session names",
+      "aria": null,
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "View options",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Add workspace",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Workspace actions for Default workspace",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "New session in Default workspace",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Session actions for Reply RC1_TEXT_OK. Do not use",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Archive session",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Pin session",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Account menu",
+      "text": "More"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Open in Finder",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "More ways to open",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "More actions",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Open right sidebar",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": "tab",
+      "placeholder": null,
+      "aria": null,
+      "text": "Chat"
+    },
+    {
+      "tag": "BUTTON",
+      "role": "tab",
+      "placeholder": null,
+      "aria": null,
+      "text": "Trajectory"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "More conversation views",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Load and jump to turn 1",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Load and jump to turn 2",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Load and jump to turn 3",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 4",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 5",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 6",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 7",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 8",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 9",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 10",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 11",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 12",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 13",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 14",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 15",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 16",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 17",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 18",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 19",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Jump to turn 20",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Load earlier"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 6s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Usage 1.7K tok"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 5s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Usage 1.2K tok"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 3s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Usage 1.4K tok"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "/receipt"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 5s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Usage 1.7K tok"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 4s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Usage 3.7K tok"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 5s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Usage 4.3K tok"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "image-A.png, click to view original",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 4s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Usage 2.6K tok"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "image-B.png, click to view original",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 6s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Usage 6.1K tok"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 3s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Usage 3.1K tok"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 6s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Usage 6.8K tok"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "image-B.png, click to view original",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 10s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 3s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Usage 3.8K tok"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "compact\nCompacted 53 history items (~1993 tokens)"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 7s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Usage 4.6K tok"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "image-A.png, click to view original",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 1s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Usage 2.7K tok"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Continuing goal\n01:38"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 12s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Usage 12.4K tok"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Stopped"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Completed in 3s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Copy",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Good response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Bad response",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Branch into a new conversation",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": "Usage 3.6K tok"
+    },
+    {
+      "tag": "DIV",
+      "role": "textbox",
+      "placeholder": null,
+      "aria": "Message or run a task, / commands, @ files or sessions",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Add files or run commands",
+      "text": ""
+    },
+    {
+      "tag": "INPUT",
+      "role": null,
+      "placeholder": null,
+      "aria": null,
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Access mode, current: Read Only",
+      "text": "Read Only"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Select model, current Flash-1017 isolated rc1 audit, reasoning effort Off",
+      "text": "Flash-1017 isolated rc1 audit\nOff"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Send message",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "20 turns 33 steps · 57 tok/s",
+      "text": "20 turns 33 steps·57 tok/s"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "64.6K tok · Cache hit 83%",
+      "text": "64.6K tok·Cache hit 83%"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "11% of context used",
+      "text": "11%"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "New tab",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Split",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Fullscreen",
+      "text": ""
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "placeholder": null,
+      "aria": "Collapse right sidebar",
+      "text": ""
+    }
+  ]
+}

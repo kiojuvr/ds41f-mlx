@@ -1,0 +1,80 @@
+- id: session-log-deepseek
+  config:
+    enabled: false
+- id: llm-pi-ai
+  disabled: true
+- id: llm-deepseek-account
+  disabled: true
+- id: deepseek-account
+  disabled: true
+- id: otel
+  disabled: true
+- id: session-telemetry-otel
+  disabled: true
+- id: llm-retry
+  disabled: true
+- id: session-title-llm
+  disabled: true
+- id: hmr
+  disabled: true
+- id: tool-working-directory
+  disabled: true
+- id: goal
+  config:
+    defaultMaxGoalRounds: 2
+- id: agent-default-model
+  config:
+    provider: deepseek-official
+    model: deepseek-flash
+- id: llm-deepseek
+  config:
+    baseURL: http://127.0.0.1:18097
+    apiKeyEnv: DS41F_LOCAL_API_KEY
+    thinking: disabled
+    reasoningEffort: off
+    maxTokens: 1024
+    maxImagesPerRequest: 1
+    imageOffloadCountQuantum: 1
+    models:
+      - id: deepseek-flash
+        name: Flash-1017 isolated rc1 audit
+        inputModalities: [text, image]
+        contextWindow: 32768
+        maxTokens: 1024
+        systemPromptUpdate: in-history
+        toolUpdate: addition-only
+- id: agent-preset-registry
+  config:
+    default: acceptance
+- insert:
+    - id: alpha2-observer
+      name: /tmp/ds41f-rc1-e2e/harness/observer.mjs
+    - id: preset-acceptance
+      name: '@deepseek-ai/dsh-agent-preset'
+      config:
+        id: acceptance
+        order: 0
+        plugins:
+          - id: persona
+            name: '@deepseek-ai/dsh-persona'
+            config:
+              prefix: You are a helpful acceptance-test assistant. Follow the user's bounded instructions. Keep answers brief. Use only the available tools. Never claim an effect without executing it.
+              complete: true
+              includeRuntimeContext: false
+          - id: acceptance-fixture
+            name: /tmp/ds41f-rc1-e2e/harness/fixture.mjs
+          - id: command-goal
+            name: '@deepseek-ai/dsh-command-goal'
+          - id: compaction
+            name: cordis:group
+            group: true
+            isolate:
+              compaction: true
+            config:
+              - id: compaction-basic
+                name: '@deepseek-ai/dsh-compaction-basic'
+                config:
+                  maxTokens: 1024
+                  thresholdRatio: 0.9
+              - id: command-compact
+                name: '@deepseek-ai/dsh-command-compact'

@@ -1,0 +1,44 @@
+{"seq":0,"at":"2026-11-06T16:29:45.904Z","action":{"kind":"snapshot","wait":1000}}
+{"seq":1,"at":"2026-11-06T16:30:06.357Z","action":{"kind":"send","text":"Reply RC1_TEXT_OK. Do not use tools yet.","wait":1000}}
+{"seq":2,"at":"2026-11-06T16:32:06.071Z","action":{"kind":"send","text":"The local server is ready now. Reply RC1_TEXT_OK. Do not use tools.","wait":12000}}
+{"seq":3,"at":"2026-11-06T16:32:30.717Z","action":{"kind":"text","text":"Workspace Write","wait":500}}
+{"seq":4,"at":"2026-11-06T16:32:31.291Z","action":{"kind":"snapshot","wait":500}}
+{"seq":5,"at":"2026-11-06T16:32:41.729Z","action":{"kind":"text","text":"Read Only","wait":500}}
+{"seq":6,"at":"2026-11-06T16:32:42.286Z","action":{"kind":"send","text":"Call baseline_receipt once and report its exact receipt.","wait":12000}}
+{"seq":7,"at":"2026-11-06T16:33:17.269Z","action":{"kind":"send","text":"Call late_receipt once, then baseline_receipt once in a later step (not in parallel). Report both receipts.","wait":12000}}
+{"seq":8,"at":"2026-11-06T16:33:42.309Z","action":{"kind":"send","text":"Call late_receipt once now that baseline_receipt is unavailable; report the receipt.","wait":8000}}
+{"seq":9,"at":"2026-11-06T16:34:17.776Z","action":{"kind":"snapshot","wait":1500}}
+{"seq":10,"at":"2026-11-06T16:34:30.317Z","action":{"kind":"text","text":"Reply RC1_TEXT_OK. Do not use","wait":1500}}
+{"seq":11,"at":"2026-11-06T16:34:31.969Z","action":{"kind":"send","text":"Continue the restored conversation: call late_receipt once and report it.","wait":10000}}
+{"seq":12,"at":"2026-11-06T16:34:51.045Z","action":{"kind":"send","text":"Please apply /receipt to return its skill receipt.","wait":10000}}
+{"seq":13,"at":"2026-11-06T16:35:01.182Z","action":{"kind":"send","text":"Use the skill tool to load receipt and apply its instruction.","wait":10000}}
+{"seq":14,"at":"2026-11-06T16:35:15.564Z","action":{"kind":"send","text":"Use skill receipt-next, the new replacement skill, and return its receipt.","wait":10000}}
+{"seq":15,"at":"2026-11-06T16:35:25.700Z","action":{"kind":"attach","paths":["/tmp/ds41f-rc1-e2e/workspace/image-A.png"],"wait":2500}}
+{"seq":16,"at":"2026-11-06T16:35:28.281Z","action":{"kind":"send","text":"Describe the attached image: color, shape, and printed code. Do not call tools.","wait":15000}}
+{"seq":17,"at":"2026-11-06T16:36:15.859Z","action":{"kind":"attach","paths":["/tmp/ds41f-rc1-e2e/workspace/image-B.png"],"wait":1800}}
+{"seq":18,"at":"2026-11-06T16:36:17.748Z","action":{"kind":"send","text":"Compare the new image to the earlier attachment. Give both printed codes and shapes. Then call late_receipt exactly once and report the receipt.","wait":12000}}
+{"seq":19,"at":"2026-11-06T16:36:29.881Z","action":{"kind":"send","text":"Without reading or uploading any images again, list the two image codes retained in this conversation. Do not use tools.","wait":8000}}
+{"seq":20,"at":"2026-11-06T16:36:38.013Z","action":{"kind":"send","text":"Use read_image once on /tmp/ds41f-rc1-e2e/workspace/image-A.png and confirm its printed code.","wait":12000}}
+{"seq":21,"at":"2026-11-06T16:36:50.147Z","action":{"kind":"attach","paths":["/tmp/ds41f-rc1-e2e/workspace/image-B.png"],"wait":1800}}
+{"seq":22,"at":"2026-11-06T16:36:52.028Z","action":{"kind":"send","text":"Identify the attached image code. Do not use tools or reread any files.","wait":10000}}
+{"seq":23,"at":"2026-11-06T16:37:32.994Z","action":{"kind":"send","text":"Continue using the retained image attachments without calling tools. State the most recent image color, shape, and code.","wait":15000}}
+{"seq":24,"at":"2026-11-06T16:37:57.882Z","action":{"kind":"command","text":"/compact","wait":18000}}
+{"seq":25,"at":"2026-11-06T16:38:15.984Z","action":{"kind":"send","text":"Continue after compaction. State the two distinct image codes and call late_receipt exactly once, then report the receipt.","wait":12000}}
+{"seq":26,"at":"2026-11-06T16:38:28.104Z","action":{"kind":"attach","paths":["/tmp/ds41f-rc1-e2e/workspace/image-A.png"],"wait":1800}}
+{"seq":27,"at":"2026-11-06T16:38:29.969Z","action":{"kind":"send","text":"Identify this fresh attachment color, shape, and printed code. Do not use tools.","wait":10000}}
+{"seq":28,"at":"2026-11-06T16:38:40.115Z","action":{"kind":"command","text":"/goal Call late_receipt once, then mark this goal complete using update_goal. Do not create other goals or do any other work.","wait":18000}}
+{"seq":29,"at":"2026-11-06T16:39:06.146Z","action":{"kind":"send","text":"Without tools, count upward from 1 to 10000, printing every number separated by spaces. Do not summarize or stop early.","wait":1000}}
+{"seq":30,"at":"2026-11-06T16:39:07.302Z","action":{"kind":"click","name":"Stop generating","wait":5000}}
+{"seq":31,"at":"2026-11-06T16:39:12.429Z","action":{"kind":"send","text":"The counting turn was cancelled. Do not resume it. Reply exactly CANCEL_RECOVERY_OK and do not call tools.","wait":10000}}
+{"seq":32,"at":"2026-11-06T16:39:22.577Z","action":{"kind":"reload","wait":2000}}
+{"seq":33,"at":"2026-11-06T16:39:24.954Z","action":{"kind":"send","text":"After browser reload, without tools, state the latest image code and then RELOAD_OK.","wait":10000}}
+{"seq":34,"at":"2026-11-06T16:40:04.934Z","action":{"kind":"send","text":"Print all the integers from 1 to 10000 as a long space-separated list. Start immediately with 1, no explanation, and keep printing until stopped. No tools.","wait":5000}}
+{"seq":35,"at":"2026-11-06T16:40:10.077Z","action":{"kind":"click","name":"Stop generating","wait":5000}}
+{"seq":36,"at":"2026-11-06T16:40:15.197Z","action":{"kind":"send","text":"Stop counting permanently. No tools. Reply exactly STREAM_CANCEL_RECOVERY_OK.","wait":10000}}
+{"seq":37,"at":"2026-11-06T16:41:19.265Z","action":{"kind":"text","text":"Reply RC1_TEXT_OK. Do not use","wait":2500}}
+{"seq":38,"at":"2026-11-06T16:41:22.000Z","action":{"kind":"send","text":"Continue this restored session without tools. Describe the newest retained image, including color, shape, and code, then say HOST_RESTART_OK.","wait":10000}}
+{"seq":39,"at":"2026-11-06T16:42:33.652Z","action":{"kind":"send","text":"Without tools, inspect the newest retained image and report its color, shape, and code. Finish with POST_RESTART_RECOVERY_OK.","wait":10000}}
+{"seq":40,"at":"2026-11-06T16:43:20.579Z","action":{"kind":"text","text":"Reply RC1_TEXT_OK. Do not use","wait":2000}}
+{"seq":41,"at":"2026-11-06T16:43:22.805Z","action":{"kind":"send","text":"Call slow_receipt exactly once. It has a cancellable 30-second wait; do not call anything else and never retry it.","wait":6000}}
+{"seq":42,"at":"2026-11-06T16:43:36.068Z","action":{"kind":"click","name":"Stop generating","wait":5000}}
+{"seq":43,"at":"2026-11-06T16:43:41.189Z","action":{"kind":"send","text":"The slow_receipt call was cancelled. Never retry it. Call late_receipt once instead, report it, and finish TOOL_CANCEL_RECOVERY_OK.","wait":12000}}

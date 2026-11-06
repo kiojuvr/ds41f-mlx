@@ -98,6 +98,15 @@ reuses the exact alpha.2 projection; `tool_removal` remains explicitly rejected.
 That correction alone did not establish interactive or agent lifecycle acceptance;
 the later E2E report above supplies the newly demonstrated bounded scope.
 
+The [rc.1 compatibility audit and real-model Web E2E](../artifacts/harness-rc1-compatibility/report.md)
+qualifies the restricted Native Messages lane against official **0.2.2-rc.1**:
+41 admitted requests, exact-ID Tools including harmless running-tool cancellation,
+retained multiple images, offload, stale-ID reupload (also after a Harness restart),
+manual compaction and one completed Goal round. Overall compatibility remains
+**PARTIAL**: broader Cordis/Plugin lifecycles and official Windows Desktop are not
+qualified. `tool_removal` remains rejected; no Runtime/configuration fix or
+production promotion follows from this evidence.
+
 ## Profiles
 
 | Capability | `mtp-serving-v1` | `mtp-singleton-v1` |

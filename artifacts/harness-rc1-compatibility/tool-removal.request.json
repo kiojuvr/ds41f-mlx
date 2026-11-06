@@ -1,0 +1,687 @@
+{
+  "model": "deepseek-flash",
+  "stream": true,
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "No inference should run for this unsupported semantic probe."
+        }
+      ]
+    },
+    {
+      "role": "system",
+      "content": [
+        {
+          "type": "tool_removal",
+          "tool": {
+            "type": "tool_reference",
+            "name": "baseline_receipt"
+          }
+        }
+      ]
+    }
+  ],
+  "max_tokens": 1024,
+  "thinking": {
+    "type": "disabled"
+  },
+  "system": "You are a helpful acceptance-test assistant. Follow the user's bounded instructions. Keep answers brief. Use only the available tools. Never claim an effect without executing it.",
+  "tools": [
+    {
+      "name": "baseline_receipt",
+      "description": "Read the harmless acceptance receipt file and return its exact text.",
+      "input_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ],
+  "dsh_plugin_packages": {
+    "version": 1,
+    "packages": [
+      {
+        "name": "@deepseek-ai/cordis-plugin-timer",
+        "version": "1.2.0"
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-default-model",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-loop",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-preset",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-agent-preset-registry",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-api-gateway",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-api-job-controller",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-api-remote-access",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-api-remotes",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-api-session-controller",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-api-settings-controller",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-api-terminal-controller",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-api-workspace-controller",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-api-workspace-files",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-attachment-local",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-authorization",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-bash-sandbox",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-connection",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-file-upload",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-hmr",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-locale",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-modules",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-resources",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-shortcuts",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-agent-preset",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-approval",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-attachment",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-brand-official",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-chat",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-commands",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-context-menu",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-conversation",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-cordis",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-deliverables",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-directory-picker-native",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-entry-customization",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-file-actions",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-file-drag",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-goal",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-input-trigger",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-jobs",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-layout",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-message-feedback",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-model-selection",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-open-in-app",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-permission-presets",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-plan",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-plugin-manager",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-reference",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-renderer",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-schedule",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-secret-mask",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-session",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-settings",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-settings-account",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-settings-agent-loop",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-settings-general",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-settings-models",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-settings-plugin-inventory",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-settings-plugins",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-settings-session-log",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-settings-shell",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-settings-subagent",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-settings-web-search",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-shortcuts",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-sidebar",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-sidebar-documentpreview",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-sidebar-files",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-sidebar-right",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-sidebar-terminal",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-skill",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-subagent",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-theme",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-tool",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-trajectory",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-user-questions",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-workflow-run",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-client-ui-workspace",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-command-compact",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-command-feedback",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-command-goal",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-commands",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-compaction-basic",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-compaction-image-offload",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-config-editor",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-cordis-client-runner",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-cordis-host-runner",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-credentials-local",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-deepseek-llm-api-extensions",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-deliverable-file-references",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-file-reference-local",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-fs-sandbox",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-goal",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-goal-round-driver",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-harness-dev-context",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-host-directory-picker-auto",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-host-directory-picker-native",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-host-open-in-app",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-host-plugin-inventory",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-host-webserver",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-jobs-local",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-llm",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-llm-deepseek-api-key",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-mcp-resources",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-message-feedback",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-message-quotes",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-office-to-pdf",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-permission-presets",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-persona",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-plugin-manager",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-plugin-package-inventory-deepseek",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-ptc-runtime-node",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-repeat-tool-reminder",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-local",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-sandbox-policy",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-schedule",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-session",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-checkpoint-policy",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-log-deepseek",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-log-export",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-persistence-jsonl",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-projection",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-projection-cache",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-query-sqlite",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-reference",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-stats",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-title",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-session-turn-outline",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-settings",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-shell-env",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-skill",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-spill-local",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-spill-policy",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-storage",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-storage-domain",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-storage-json",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-subagent",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-subagent-fork-in-process",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-subagent-spawn-in-process",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-subprocess-local",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-system-prompt",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-token-meter",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-call-timeout-policy",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-cordis",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-executor-native",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-tool-subagent",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-tools",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-typert-loader",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-typert-registry",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-user-approval",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-user-questions",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-web",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-web-app",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-web-deepseek-api",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-web-fetch-http",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-web-search-deepseek",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-working-directory",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-workspace",
+        "version": "0.2.2-rc.1"
+      },
+      {
+        "name": "@deepseek-ai/dsh-workspace-changes",
+        "version": "0.2.2-rc.1"
+      }
+    ]
+  }
+}

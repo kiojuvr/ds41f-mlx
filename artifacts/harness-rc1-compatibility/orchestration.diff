@@ -1,0 +1,367 @@
+diff --git a/packages/boot/app-boot/src/index.ts b/packages/boot/app-boot/src/index.ts
+index acab24ebe4..daf1406a43 100644
+--- a/packages/boot/app-boot/src/index.ts
++++ b/packages/boot/app-boot/src/index.ts
+@@ -340,9 +340,7 @@ async function recompose(
+       diagnostic: failure.entry.fiber?.uid ? reloadDiagnostic(failure) : undefined,
+     }))
+     // Removed entries leave the Loader store before their async disposers finish.
+-    const previousFibers = [...ctx.loader.entries()].flatMap(row => row.fiber === undefined ? [] : [{
+-      fiber: row.fiber, failed: row.fiber.state === FIBER_FAILED || row.fiber.state === FIBER_DISPOSED,
+-    }])
++    const previousFibers = [...ctx.loader.entries()].flatMap(row => row.fiber === undefined ? [] : [row.fiber])
+     const { patches: previous = [], ...includeConfig } = entry.options.config as Include.Config
+     const current = withResolution ? ctx.get('pluginPackages')?.resolution : undefined
+     // A plain-data resolution has no inputs to recompute from.
+@@ -386,12 +384,15 @@ async function recompose(
+     const prepared = prepareProfilePatches(ctx, patches, parentURL, binName)
+     applying = true
+     const retried = [...new Set([...running, ...withResolution ? [...ctx.loader.entries()].filter(importFailed) : []])]
++    // Group.update replaces its data array and attempts every row it still lists, including failed imports.
++    const priorData = new Map(retried.map(row => [row, row.parent.data]))
+     try {
+       await entry.update({ config: { ...includeConfig, patches: prepared } })
+     } finally {
+-      await resume(ctx, retried)
++      // Only rows whose Group did not update still need an explicit retry after the awaited update.
++      await resume(ctx, retried.filter(row => row.parent.data === priorData.get(row)))
+     }
+-    const results = await Promise.allSettled(previousFibers.map(({ fiber }) => fiber.await()))
++    await Promise.allSettled(previousFibers.map(fiber => fiber.await()))
+     await ctx.loader.await()
+     const failures = await inactiveEntries(ctx)
+     const introduced = failures.filter((failure) => {
+@@ -403,9 +404,6 @@ async function recompose(
+       return !previousFailures.some(previous => sameFailure(previous, failure))
+     })
+     if (introduced.length > 0) throw new Error(activationDiagnostic(binName, introduced, false).trimEnd())
+-    for (const [index, result] of results.entries()) {
+-      if (result.status === 'rejected' && !previousFibers[index]?.failed) throw result.reason
+-    }
+     ctx.emit('app-boot/config-reload')
+     return { warnings: failures.map(reloadDiagnostic) }
+   } finally {
+@@ -415,7 +413,7 @@ async function recompose(
+         // Ascending original positions put each row back where it was.
+         for (const { group, options, index } of stopped.toSorted((left, right) => left.index - right.index)) {
+           // `create` starts the entry but leaves the group's option list as it is; that list is what the next update
+-          // compares against to remove the row and what the Include writes back.
++          // compares against to remove the row.
+           group.data.splice(index, 0, options)
+           await group.create(options)
+         }
+@@ -658,10 +656,9 @@ export function renderConfigDump(
+   const base = parsed as Parameters<typeof applyEntryPatches>[0]
+   // snapshot_k = ONE application of layers 1..k flattened, using the exact
+   // arguments boot passes for that prefix. snapshot_N is the mounted composition.
+-  // The patches are cloned per call: applyEntryPatches detaches the entry
+-  // list but pushes `insert` rows by reference from the patch list, so
+-  // sharing patch objects across snapshot calls would leak a later
+-  // snapshot's mutations into an earlier one's result.
++  // The patches are cloned per call: applyEntryPatches clones entries and
++  // inserted rows but assigns override values such as `config` by reference,
++  // so each snapshot keeps its own copies of those values.
+   const snapshot = (count: number, warnings: string[]): ReturnType<typeof applyEntryPatches> => {
+     const flattened = structuredClone(layers.slice(0, count).flatMap(layer => layer.patches))
+     return applyEntryPatches(base, flattened, (message: string, ...args: unknown[]) => {
+@@ -806,8 +803,8 @@ export interface FailLoudProcess {
+   exit(code: number): void
+ }
+ 
+-// Loader rc.5 derives and drops a rejected promise after a fiber fails. Keep
+-// exact reasons already folded into the boot diagnostic visible through the
++// An activation rejection already folded into the boot diagnostic can also
++// reach the process rejection handler. Keep exact reasons visible through the
+ // next process rejection checkpoint so the process guard can coalesce them.
+ const assembledActivationRejections = new Map<unknown, number>()
+ 
+@@ -1224,11 +1221,6 @@ export async function boot(
+   try {
+     ctx.baseUrl = pathToFileURL(dirname(absoluteConfigPath)).href + '/'
+     ctx.provide('dshHomePath', dshHomePath)
+-    // Fiber.update() discards the restart promise. Observe it before the
+-    // waterfall returns; activation audits still report the failed fiber.
+-    ctx.on('internal/update', (_config, _noSave, next: () => unknown) => {
+-      void Promise.resolve(next()).catch((error: unknown) => { ctx.logger.error(error) })
+-    }, { global: true, prepend: true })
+     await ctx.plugin(Loader)
+     await prepare?.(ctx)
+     stage = 'plugin tree failed to load'
+diff --git a/packages/boot/app-boot/src/startup-diagnostics.ts b/packages/boot/app-boot/src/startup-diagnostics.ts
+index 7982ccc111..c9fe729935 100644
+--- a/packages/boot/app-boot/src/startup-diagnostics.ts
++++ b/packages/boot/app-boot/src/startup-diagnostics.ts
+@@ -90,7 +90,7 @@ export function captureStartupComposition(ctx: Context): StartupCompositionDiagn
+         const impl = store[key]
+         if (impl?.name !== service) continue
+         providers.push({
+-          entry: impl.fiber.entry?.id ?? 'unknown', state: stateName(impl.fiber.state),
++          entry: impl.ctx.fiber.entry?.id ?? 'unknown', state: stateName(impl.ctx.fiber.state),
+           visibility: key === scope ? 'same-scope' : 'other-scope',
+         })
+       }
+diff --git a/packages/boot/plugin-manager/src/github-connection.ts b/packages/boot/plugin-manager/src/github-connection.ts
+index 99b64fd73c..e2d349c734 100644
+--- a/packages/boot/plugin-manager/src/github-connection.ts
++++ b/packages/boot/plugin-manager/src/github-connection.ts
+@@ -4,9 +4,21 @@ import { join } from 'node:path'
+ import { execa } from 'execa'
+ import { scrubbedParentEnv } from '@deepseek-ai/dsh-subprocess'
+ import { classifyInstallFailure } from './install-failure.ts'
+-import type { ParsedInstallSpec } from './install-spec.ts'
++import { HTTP_USER_INFO, type ParsedInstallSpec } from './install-spec.ts'
+ import type { PackageResult } from './types.ts'
+ 
++/**
++ * A failed check, with the Git command line the install dialog shows as the installation's only run.
++ * The returned result itself stays a plain {@link PackageResult}: the command line never joins the wire fields.
++ */
++export interface GithubConnectionFailure extends PackageResult {
++  /**
++   * The `git` command line the check ran, with the user information of an http(s) repository URL removed:
++   * `git -c credential.helper= ls-remote -- <repository> HEAD`.
++   */
++  readonly argv: readonly string[]
++}
++
+ /** Deadline, diagnostics and cancellation for one read-only GitHub check. */
+ export interface GithubConnectionOptions {
+   timeoutMs: number
+@@ -23,11 +35,12 @@ export interface GithubConnectionOptions {
+  * @param spec The parsed installation address; npm packages, local paths and other hosts are not checked.
+  * @param dir The profile directory where installation runs.
+  * @param options The connection deadline, output bound and operation cancellation.
+- * @returns A failed check with bounded output and a complete log at logPath, or undefined for a reachable repository or an unhandled spec.
++ * @returns A failed check carrying the command line it ran (without URL user information) and its bounded output, with a
++ * complete log at logPath, or undefined for a reachable repository or an unhandled spec.
+  */
+ export async function checkGithubConnection(
+   spec: ParsedInstallSpec, dir: string, options: GithubConnectionOptions,
+-): Promise<PackageResult | undefined> {
++): Promise<GithubConnectionFailure | undefined> {
+   if (spec.kind !== 'git') return undefined
+   const host = spec.host.toLowerCase().replace(/:.*$/, '')
+   if (host !== 'github.com' && !host.endsWith('.github.com')) return undefined
+@@ -40,8 +53,12 @@ export async function checkGithubConnection(
+   const logDir = await mkdtemp(join(logRoot, 'github-connection-'))
+   const logPath = join(logDir, 'git.log')
+   const log = await open(logPath, 'ax+', 0o600)
++  const argv = ['git', '-c', 'credential.helper=', 'ls-remote', '--', repository, 'HEAD'] as const
++  // The executed command keeps any credentials the spec names; the recorded one drops them before it is displayed.
++  const recordedArgv = argv.map(argument => argument.replace(HTTP_USER_INFO, '$1'))
++  const [command, ...args] = argv
+   try {
+-    const result = await execa('git', ['-c', 'credential.helper=', 'ls-remote', '--', repository, 'HEAD'], {
++    const result = await execa(command, args, {
+       cwd: dir,
+       env: {
+         ...scrubbedParentEnv(), ...options.env, LC_ALL: 'C', GIT_TERMINAL_PROMPT: '0',
+@@ -58,9 +75,13 @@ export async function checkGithubConnection(
+     const bytes = Buffer.alloc(Math.min(size, options.outputBytes))
+     await log.read(bytes, 0, bytes.length, size - bytes.length)
+     const output = bytes.toString('utf8')
++    // `PackageResult.exitCode` is a status number, so a Git the deadline stopped records the status its failure is read
++    // as. The run streamed for the same failure reports no exit code, because that process ended without one.
+     return {
+-      exitCode: result.exitCode ?? (result.code === 'ENOENT' ? 127 : 1), output, truncated: size > options.outputBytes, logPath,
++      argv: recordedArgv, exitCode: result.exitCode ?? (result.code === 'ENOENT' ? 127 : 1),
++      output, truncated: size > options.outputBytes, logPath,
+       kind: classifyInstallFailure({ log: output, timedOut: result.timedOut }),
++      ...result.timedOut ? { timedOut: true } : {},
+     }
+   } finally {
+     await log.close()
+diff --git a/packages/boot/plugin-manager/src/index.ts b/packages/boot/plugin-manager/src/index.ts
+index 271e6af0d3..ceb82aac47 100644
+--- a/packages/boot/plugin-manager/src/index.ts
++++ b/packages/boot/plugin-manager/src/index.ts
+@@ -36,7 +36,7 @@ import { attributeFailure, normalizeRegistry, NPMMIRROR_REGISTRY, registryPlan }
+ import { flatten, writePluginEnabled } from './patch.ts'
+ import { incompatiblePlugin, ManagementFailure } from './failure.ts'
+ import { approveBuilds, recordPendingBuilds } from './build-approval.ts'
+-import { checkGithubConnection } from './github-connection.ts'
++import { checkGithubConnection, type GithubConnectionFailure } from './github-connection.ts'
+ import { chooseGitTransport, sshGitSpec } from './git-transport.ts'
+ import { newerVersions, VERSION_FIELDS, VERSION_LIST_FIELDS, versionFacts } from './versions.ts'
+ import type {
+@@ -522,6 +522,7 @@ export class PluginManager extends TypertRemoteService {
+         catch (error) { platformError = managementError(error) }
+         const error = platformError ?? targetError ?? (enabled ? { code: 'not-bundle' as const } : undefined)
+         bundles.push({ name, official, availability: 'missing', ...catalogMeta, ...target, enabled, installed, optional,
++          ...offered.listedByDefault === undefined ? {} : { listedByDefault: offered.listedByDefault },
+           ...platformError?.code === 'unsupported-platform' ? { listedByDefault: false } : {},
+           removable: enabled, rows: [], overrides: [],
+           ...error === undefined ? {} : { error } })
+@@ -857,7 +858,8 @@ export class PluginManager extends TypertRemoteService {
+   /**
+    * Install a package using the same pnpm implementation as dsh plugin. GitHub
+    * repositories get a connection check bounded by githubConnectionTimeoutMs before pnpm starts;
+-   * only network failures or timeouts stop installation, while pnpm owns authentication and transport fallback. An
++   * only network failures or timeouts stop installation, and a stop streams the check's diagnostic
++   * as the installation's install-log run under its request id, while pnpm owns authentication and transport fallback. An
+    * HTTP(S) Git URL on another host is installed over SSH instead when access probes bounded by gitTransportTimeoutMs
+    * find that only SSH can read it. A run
+    * that fails, is cancelled, or adds a package without a bundle patch restores
+@@ -901,13 +903,23 @@ export class PluginManager extends TypertRemoteService {
+           timeoutMs: this.githubConnectionTimeoutMs, outputBytes: this.outputBytes, signal, ...env,
+         })
+         this.packageOperations.add(connection)
+-        let connectionFailure: PackageResult | undefined
++        let connectionFailure: GithubConnectionFailure | undefined
+         try { connectionFailure = await connection }
+         finally { this.packageOperations.delete(connection) }
+         if (stopped()) throw new InstallCancelledError()
+         if (connectionFailure?.kind === 'network' || connectionFailure?.kind === 'timeout') {
+-          result.packageResult = connectionFailure
++          // The answer keeps a plain PackageResult; the check's command line is only streamed as the run below.
++          const { argv, ...packageResult } = connectionFailure
++          result.packageResult = packageResult
+           result.failedAt = 'spec-host'
++          // pnpm never runs, so the check is the installation's only run: stream its failure into the install log.
++          // A timed-out Git reports no exit code of its own, unlike the result, which records the status it is read as.
++          if (requestId !== undefined) {
++            this.ownerContext.emit('plugin-manager/install-log', {
++              requestId, jobId: randomUUID(), argv, cwd: this.profile.dir, stream: 'stderr',
++              text: connectionFailure.output, exitCode: connectionFailure.timedOut === true ? null : connectionFailure.exitCode,
++            })
++          }
+           throw new Error(connectionFailure.output)
+         }
+         const transport = chooseGitTransport(parsed, this.profile.dir, { timeoutMs: this.gitTransportTimeoutMs, signal, ...env })
+diff --git a/packages/boot/plugin-manager/src/install-spec.ts b/packages/boot/plugin-manager/src/install-spec.ts
+index 4b76f1925e..2fb6b64cca 100644
+--- a/packages/boot/plugin-manager/src/install-spec.ts
++++ b/packages/boot/plugin-manager/src/install-spec.ts
+@@ -94,7 +94,7 @@ export function parseInstallSpec(raw: string): ParsedInstallSpec {
+ /** A recorded dependency value pnpm resolves outside a registry: a protocol other than a registry alias, or an scp-like git address. */
+ const NON_REGISTRY_VALUE = /^(?!(?:npm|jsr|workspace|catalog):)[a-z][a-z0-9+.-]*:|^[^@/:\s]+@[^:/\s]+:/i
+ /** The user information of an http(s) URL, up to the last `@` before the path, which holds a password or access token when present. */
+-const HTTP_USER_INFO = /^((?:git\+)?https?:\/\/)[^/]*@/i
++export const HTTP_USER_INFO = /^((?:git\+)?https?:\/\/)[^/]*@/i
+ 
+ /**
+  * The spec `pnpm add` accepts for a dependency the profile manifest records. A git address, URL, or other
+diff --git a/packages/boot/plugin-manager/src/operations.ts b/packages/boot/plugin-manager/src/operations.ts
+index e7b761ad3c..d0ab1dccab 100644
+--- a/packages/boot/plugin-manager/src/operations.ts
++++ b/packages/boot/plugin-manager/src/operations.ts
+@@ -470,6 +470,8 @@ export async function runProfilePnpm(
+     if (result.failed && output.length === 0) {
+       const diagnostic = result.shortMessage ?? 'pnpm failed'
+       await log.write(diagnostic)
++      // The run printed nothing, so this diagnostic is the whole of its captured output; stream it as such.
++      options.onOutput?.(diagnostic, 'stderr')
+       truncated = Buffer.byteLength(diagnostic) > options.outputBytes
+       output = Buffer.from(diagnostic).subarray(0, options.outputBytes)
+     }
+diff --git a/packages/boot/plugin-manager/src/types.ts b/packages/boot/plugin-manager/src/types.ts
+index efef87b4dc..221607f1e8 100644
+--- a/packages/boot/plugin-manager/src/types.ts
++++ b/packages/boot/plugin-manager/src/types.ts
+@@ -139,13 +139,18 @@ export type PluginInstallFailureKind =
+ 
+ /** Package operation completion, including Git checks and a retrieval path for unabridged diagnostics. */
+ export interface PackageResult {
++  /** The status the run is read as having ended with; a run the manager terminated records the coerced status 1. */
+   exitCode: number
+   output: string
+   truncated: boolean
+   logPath: string
+   /** Present when the run failed: what kind of failure its exit and output describe. */
+   kind?: PluginInstallFailureKind
+-  /** The manager terminated the run after it printed nothing for its silence bound; `exitCode` still reports how it ended. */
++  /**
++   * The run outlived its bound: the manager terminated it after it printed nothing for its silence bound, or the GitHub
++   * connection check hit its deadline. Such a run reports no exit status of its own, so `exitCode` records the status
++   * its failure is read as rather than a status the process returned.
++   */
+   timedOut?: boolean
+   /** Present when a compatibility check refused the run: the packages the running DSH version rejects. */
+   incompatible?: IncompatiblePlugin[]
+@@ -344,19 +349,19 @@ export interface PluginInstallCancellation {
+   readonly status: 'cancelled' | 'too-late' | 'not-running'
+ }
+ 
+-/** One chunk of a pnpm run's output, as the run produces it. */
++/** One chunk of an installation run's output: a pnpm run, or the GitHub connection check that stopped it. */
+ export interface PluginInstallLogChunk {
+   /** The installation the run belongs to, when its caller supplied a request id. */
+   readonly requestId?: PluginInstallRequestId
+   /** The run the chunk belongs to. */
+   readonly jobId: string
+-  /** The command line the run executes: pnpm's command name, then its arguments. */
++  /** The command line the run executes: its command name, then its arguments. */
+   readonly argv: readonly string[]
+   /** The directory the run executes in: the profile directory. */
+   readonly cwd: string
+   readonly stream: 'stdout' | 'stderr'
+   readonly text: string
+-  /** Present on the run's last chunk: pnpm's exit code, null when it ended without one. */
++  /** Present on the chunk that ends a run: its exit code, null when the run ended without one. */
+   readonly exitCode?: number | null
+ }
+ 
+@@ -426,7 +431,7 @@ declare module '@deepseek-ai/cordis' {
+      */
+     'plugin-manager/changed'(change: PluginChange): void
+     /**
+-     * One chunk of a pnpm run's output, streamed as the run produces it.
++     * One chunk of an installation run's output, streamed as the run produces it.
+      * @mode emit
+      * @param chunk - the chunk and the run it belongs to.
+      */
+diff --git a/packages/compaction/compaction-basic/src/types.ts b/packages/compaction/compaction-basic/src/types.ts
+index e8160dba2c..23e195aab7 100644
+--- a/packages/compaction/compaction-basic/src/types.ts
++++ b/packages/compaction/compaction-basic/src/types.ts
+@@ -4,6 +4,12 @@
+  * @module @deepseek-ai/dsh-compaction-basic/types
+  */
+ 
++declare module '@deepseek-ai/dsh-llm/types' {
++  interface LlmRequestPurposeMap {
++    'compaction': true
++  }
++}
++
+ import type { LlmCallConfig } from '@deepseek-ai/dsh-llm'
+ 
+ /** Policy fields shared by the default policy and exact model overrides. */
+diff --git a/packages/core/system-prompt/src/index.ts b/packages/core/system-prompt/src/index.ts
+index 45442e3a23..0b19d2463f 100644
+--- a/packages/core/system-prompt/src/index.ts
++++ b/packages/core/system-prompt/src/index.ts
+@@ -145,6 +145,7 @@ const SECTION_ORDERS = {
+   TOOL_READ: 1100,
+   TOOL_WRITE: 1200,
+   TOOL_EDIT: 1300,
++  TOOL_APPLY_PATCH: 1350,
+   TOOL_GLOB: 1400,
+   TOOL_GREP: 1500,
+   TOOL_JOBS: 1600,
+@@ -154,6 +155,7 @@ const SECTION_ORDERS = {
+   TOOL_LSP: 2200,
+   TOOL_SESSION_QUERY: 2300,
+   TOOL_GOAL: 2400,
++  TOOL_SCHEDULE: 2500,
+   TOOL_WORKFLOW: 2600,
+   TOOL_RALPH: 2700,
+   TOOL_SUBAGENT: 2800,
+diff --git a/packages/goal/goal-round-driver/src/index.ts b/packages/goal/goal-round-driver/src/index.ts
+index 2d20ee08d9..c84f9c26d1 100644
+--- a/packages/goal/goal-round-driver/src/index.ts
++++ b/packages/goal/goal-round-driver/src/index.ts
+@@ -351,6 +351,13 @@ export function apply(ctx: Context): void {
+             return
+           }
+           if (event.data.reason.kind !== 'aborted') return
++          const abortReason = event.data.reason.reason
++          // Agent disposal aborts the round without a pause decision, so continuation
++          // is only disarmed and the durable phase stays active, as on driver unload.
++          if (abortReason.kind === 'disposed') {
++            disarm(state)
++            return
++          }
+           if (state.attempt?.phase === 'claimed' || state.attempt?.phase === 'admitted') {
+             state.attempt.cancelled = true
+           }
