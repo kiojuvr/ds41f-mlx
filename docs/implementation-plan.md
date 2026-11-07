@@ -16,6 +16,18 @@ admission redesign, official Harness compatibility expansion and Production
 promotion are separate decisions. Unrelated priorities remain unchanged; the user
 must independently select the next objective.
 
+## Harness 0.2.2-rc.1 compatibility campaign closure
+
+**CLOSED — PASS within the verified Native Web / Native Messages compatibility scope**.
+The [campaign report](../artifacts/harness-rc1-compatibility/report.md) preserves
+41 real-model requests, 15 exact-ID Tool pairs and the source/execution identities.
+Broader Plugin lifecycle coverage remains partial; `tool_removal` is unsupported
+and Session-log upload remains disabled. No full upstream feature parity or new
+implementation phase is implied.
+Windows Desktop-specific behavior is outside this compatibility campaign and is not included in its verdict.
+No Windows validation task or qualification gate remains for campaign closure;
+Desktop will be exercised through ordinary operational use.
+
 ## Upstream-first architecture and compatibility policy
 
 **Follow official DeepSeek Harness, DeepSeek Recipe and DeepInfer architecture

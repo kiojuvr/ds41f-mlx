@@ -43,6 +43,14 @@ supplies bounded model-backed evidence for tools, Skills, `/goal`, manual
 `/compact`, Files/images and text cancellation. [Capabilities](capabilities.md)
 consolidates current status without rewriting the audit's historical findings.
 
+The [official Harness 0.2.2-rc.1 campaign](../artifacts/harness-rc1-compatibility/report.md)
+is **CLOSED — PASS within the verified Native Web / Native Messages compatibility scope**:
+41 real-model requests and 15 exact-ID Tool pairs. Broader Plugin lifecycle
+coverage remains partial; `tool_removal` remains unsupported and Session-log upload
+remains disabled. This is not complete upstream feature parity.
+Windows Desktop-specific behavior is outside this compatibility campaign and is not included in its verdict.
+There is no pending Windows qualification gate or follow-on campaign.
+
 The [scoped release record](../release/scoped-local-20261015/release.json) binds
 historical installed packages and acceptance, including retired OFF assets. Those
 records, numerical specifications under `archive/validation/`, source attribution

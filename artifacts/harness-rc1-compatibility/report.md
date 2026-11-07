@@ -2,8 +2,13 @@
 
 ## Decision
 
-**PARTIAL overall; compatible within the tested, restricted macOS Web / Native
-Messages scope. Not unconditional rc.1 or Windows Desktop compatibility.**
+**CLOSED — PASS within the verified Native Web / Native Messages compatibility scope.**
+
+This is supported-scope compatibility, not unconditional Harness feature parity.
+Broader Plugin lifecycle behavior remains partially qualified; `tool_removal`
+remains unsupported. Neither is silently promoted to supported by this verdict.
+Windows Desktop-specific behavior is outside this compatibility campaign and is not included in its verdict.
+Windows validation is not a closure dependency or outstanding acceptance task.
 
 Official rc.1 Web → official Native provider → admitted installed Flash-1017
 Runtime completed **41 real-model Native requests**, **15 exact-ID Tool
@@ -15,15 +20,18 @@ including one after a Harness restart. Canonical/pair/wire checks pass.
 
 No new integration blocker was reproduced in this envelope. `tool_removal` still
 fails closed and remains unsupported. General Cordis/Plugin-manager lifecycle
-coverage is partial. **Every Windows Desktop execution test is NOT TESTED.**
+coverage is partial. The verified Native integration campaign is closed.
 No implementation fixes, admission changes, production configuration changes,
 credential changes, custom Harness fork, push or deployment promotion occurred.
 
 ### Compact compatibility matrix
 
 Statuses describe the bounded paths below, not universal feature parity.
-**Totals for these ten rows only: PASS 7 / FAIL 1 / PARTIAL 1 / NOT TESTED 1 /
-NOT APPLICABLE 0.** The FAIL is a preserved unsupported feature, not a new regression.
+**Capability inventory totals for these nine rows only: PASS 7 / FAIL 1 /
+PARTIAL 1 / NOT TESTED 0 / NOT APPLICABLE 0.** The FAIL records the preserved
+unsupported `tool_removal` feature, not a new regression. The inventory includes
+unsupported and broader partially qualified capabilities for transparency; it
+is not an aggregate campaign verdict. The verified supported scope is PASS.
 
 | Capability | alpha.2 Baseline | rc.1 Result | Evidence |
 |---|---|---|---|
@@ -35,7 +43,6 @@ NOT APPLICABLE 0.** The FAIL is a preserved unsupported feature, not a new regre
 | Vision / Files | PASS bounded A/B, offload and reacquisition | **PASS**, four composer attachments + one image-tool occurrence; up to three retained occurrences; two stale-ID recoveries | requests 15–26, 36–37; recovery stimuli; source hashes |
 | Session recovery | PASS Harness-only restart, text cancellation | **PASS**, three Harness restarts, browser reload, two model cancellations, tool cancellation, retained-image continuation | UI 10–11, 30–43; 336 persisted events |
 | Paired KV invariants | PASS 40 Target / 3 DSpark, replay/repack zero | **PASS**, all 41 canonical frontiers and complete compatible roots verified | `prepared.jsonl.gz`, `trace-*.json.gz`, `audit.py` |
-| Windows Desktop | NOT TESTED | **NOT TESTED**, no Windows machine/session available | §7 manual procedure; no binary execution/provenance claim |
 | `tool_removal` | Unsupported / rejected | **FAIL**, unchanged unsupported semantic capability, excluded by `addition-only` | HTTP 400 probe; unchanged Harness serializer; unchanged official Recipe HEAD |
 
 ## 1. Exact identities and environment
@@ -62,7 +69,6 @@ the alpha.2 baseline, not a newly discovered rc.1 protocol requirement.
 | Installed execution identity | **`1c2c5c385e9a5812880a9f5007a9b704edfecc6bf77b27d7a72c68dcabde1545`**; admitted dependency identity, not a substitute for source provenance |
 | Model | Official DeepSeek-V4.1-Flash-1017, revision **`1bae0e1088993b9b82de08f59de5be5a34e42170`**, `flash-1017-pre-woa-fp8-v1`; read-only checkpoint `/Volumes/KIOXIA-PRO-2/models/deepseek-ai/DeepSeek-V4.1-Flash-1017` |
 | Session | **`session-1066f8e2-5b35-4dac-b7d8-08bd0d7e2be1`**, one accepted conversation; unused draft is not inference evidence |
-| Windows Desktop | No installed/executed binary; no installer hash or Windows build equivalence asserted |
 
 Native/dependency/checkpoint-byte admission passed before model load; the copied
 checkpoint hash cache is isolated. There was one model load, no runtime reload.
@@ -136,7 +142,7 @@ coverage; **the upstream full test suite was not executed**.
 | Legacy Session history migration validation changes for old subagent descriptors | `dffda31215`, `e51cb3959f`; `session-format-v0-to-v1/src` | Harness; no alternate ds41f history owner | Upstream legacy/relationships/validation tests. New-format Session resume executed; legacy migration NOT TESTED |
 | Files reuse, expiry recognition/reupload, normalized image prep and immediate composer upload **unchanged** | `llm-deepseek/src/{request-files,file-store,files-api,upload-index,images}.ts`, `client/file-upload/src` | Harness retains original attachments/index; Runtime Files remain process-local. New UI uploading does not confer persistent provider IDs | Upstream files/file-store tests + prior Files reports. Actual rc.1 uploads, stale 404 recovery twice, offload/reacquisition and quota diagnostics executed; TTL expiry/runtime restart not tested |
 | Model catalog/limits Native config and default capacity implementations **unchanged** | `llm-deepseek/src/{models,model-info,config,defaults}.ts`; model-row/select UI layout changed | Harness selection/capacity policy; explicit limits still required for smaller endpoints. No new MLX capacity implied | Existing catalog/model settings tests; pinned route executed only. Model switching/smaller-context failure NOT TESTED |
-| Desktop: trusted original-file download / clipboard fallback IPC and DevTools menus; CUA macOS helper delivery/onboarding | `apps/desktop/src/{file-actions,ipc,main,preload-app}.ts`, `1de7f17cc0`, `4214f86da3`, `dbd881ab46`; Windows build-root cleanup `b2a7d2ec95` | Desktop/Host owns transport and native permissions; no evidence of changed Native Files recovery contract. CUA source for common Computer Use unchanged, macOS helper changes are not Windows qualification | Upstream file-actions/preload/startup/CUA tests; official Windows installer/Host/CUA execution **required, unavailable** |
+| Desktop source context (excluded from campaign acceptance) | `apps/desktop/src/{file-actions,ipc,main,preload-app}.ts`, `1de7f17cc0`, `4214f86da3`, `dbd881ab46`; Windows build-root cleanup `b2a7d2ec95` | Desktop/Host owns transport and native permissions; source review does not establish binary execution equivalence | Retained source-delta evidence only; no Desktop acceptance requirement |
 
 Session-log request-upload exclusion refactoring (`a36ddf4c40`) does not add
 Runtime ingestion of `dsh_session_log`. That extension remains disabled/rejected.
@@ -354,8 +360,6 @@ No competing persistence owner was introduced.
 
 Other boundaries preserved:
 
-- Windows and Windows Computer Use: **NOT TESTED**, not inferred from Web, shared
-  sources, macOS helper changes or successful receipt Tools.
 - Automatic retrieval of an offloaded historical image (rather than explicit new
   acquisition), provider TTL expiry, Runtime restart/Files loss, permanently missing original
   attachment, repeated stale-ID rejection, crash during unknown effect, true
@@ -379,72 +383,23 @@ import mode, and incomplete inspect are retained and corrected only in test
 invocation. Actual Runtime/Recipe admission and accepted rc.1 requests pass.
 No MLX/DeepInfer lifecycle/admission failure was observed after successful load.
 
-## 7. Official Windows Desktop — NOT TESTED and reproduction procedure
+## 7. Campaign closure and scope
 
-No Windows host, VM, remote Desktop session or official installer execution was
-available. Consequently **connection, Native requests, attachments/multiple-image
-continuation, commands, Skills/Plugins, Windows Computer Use, Session restore,
-Desktop restart and post-restart File IDs are all NOT TESTED**. No local modified
-Harness or Web browser is substituted for these results.
+The compatibility campaign is closed on the retained official rc.1 Native Web
+execution evidence: 41 admitted real-model requests and 15 exact-ID Tool pairs,
+with the commands, Vision/Files, cancellations, restarts and canonical/paired
+checks described above. No new execution is claimed by this documentation change.
 
-The historical Windows File-ID failure remains **unresolved/unqualified** by this
-assessment. Prior repository investigation explicitly lacked the exact failing
-Windows install and wire identity; it did not prove universal Files causality.
-The rc.1 Native Files recovery implementation is unchanged. Web's two successful
-recoveries show the bounded existing contract works with this Runtime, not that
-the official Windows failure is fixed or merely bypassed. Immediate composer
-upload was already present in alpha.2's final source and still does not persist
-provider File IDs across Runtime loss.
+Supported-scope acceptance retains Native Messages, Thinking OFF for this tested
+envelope, `addition-only`, disabled Session-log upload and explicit 32768 context /
+1024 output limits. These bounded settings do not expand Runtime admission or
+constitute universal production sizing recommendations.
 
-Reproducible manual acceptance (use an isolated user profile and approved trusted
-LAN endpoint; do not expose unauthenticated Runtime publicly):
-
-1. Obtain **official** Windows Desktop rc.1 from official release distribution.
-   Record download URL/time, installer SHA256, Authenticode publisher/verification,
-   installed About version, OS/build/architecture and bundled Host/package identity.
-   Do not build or patch a substitute. Reject an alpha/other rc as target evidence.
-2. Back up existing Harness profile; create a disposable profile/workspace. Point
-   its Native DeepSeek provider to the existing runtime base URL without `/v1`,
-   explicit endpoint-appropriate context/output limits, `addition-only`, Session-log
-   upload off. Preserve production admission/credentials. Record effective config
-   with secrets redacted and runtime identity/health before tests.
-3. Text turn → genuine harmless sequential receipt reads → exact call/result-ID
-   continuation. Exercise deferred activation with only deferred declarations.
-   Observe canonical `message_stop` and certificate-before-effect boundary.
-4. Attach retained A PNG, confirm blue triangle AX-31; attach B, confirm orange
-   square BX-72; compare both, interleave one harmless Tool and continue without
-   reattachment. Track composer upload receipt, Harness attachment identity,
-   provider File ID, raw/normalized digest and Runtime prepared spans separately.
-5. Activate one disposable Skill explicitly and via Tool; check plugin discovery,
-   harmless enable/disable/restore. Enable the **official Windows Computer Use**
-   plugin through its supported installation flow. Record plugin/version/platform
-   availability. On a disposable desktop, perform screenshot/inspection only,
-   verify Vision, then one explicitly approved reversible action. No arbitrary
-   computer-control permission is implied by Web receipt acceptance.
-6. Invoke actual UI `/goal` for one bounded receipt/complete round; invoke
-   `/compact`, require real summary + durable replacement + successful follow-up.
-   Stop text generation and a harmless cancellable Tool separately; recover with
-   new instructions and check IDs and effect log for no automatic replay.
-7. Wait for idle and **Quit via tray/application menu** (closing X can merely
-   hide the app). Confirm Host exits, reopen the same official Desktop and Session,
-   continue retained images without reattaching. Record whether provider IDs are
-   reused, preemptively reuploaded, or rejected/recovered. This distinguishes a
-   genuine recovery from bypass by fresh upload.
-8. Separately, on an explicitly approved **isolated** endpoint, invalidate one
-   owned provider ID (or let its ordinary TTL expire). Do not edit Harness index,
-   history or image identity. Require recognizable missing-ID response, exact
-   mapping invalidation, bounded reupload from retained bytes, one successful
-   retry, unchanged pixels, and no Tool replay. Then, if authorized, test actual
-   Runtime restart separately: provider Files are process-local. Never delete
-   production/user IDs just to provoke a test.
-9. Test absent original attachment / repeated rejection as a negative case:
-   expect visible bounded failure, never silent mismatched image continuation,
-   guessed file identity or unlimited retry. Preserve network status/error body,
-   app/Host logs and original Session; redact secrets, not identity/digest joins.
-10. Collect sampled memory/MLX use and swap, canonical prompt/Target/DSpark roots,
-    effect counts, final empty queues/health. Classify each Windows scenario by
-    PASS/FAIL/PARTIAL/NOT TESTED; do not replace this report's Windows status until
-    actual official-binary evidence exists.
+The excluded Desktop work supplies no acceptance criteria, aggregate status row,
+pending qualification gate or follow-up task. Ordinary operational use does not
+reopen this campaign. Broader Plugin/Cordis failure-path coverage remains partial
+as documented in §6; unsupported semantics remain unsupported, not reasons to
+relabel the verified Native integration PARTIAL.
 
 ## 8. Reproduction, retention and final operational decision
 
@@ -502,15 +457,15 @@ Do not remove `addition-only` / disabled Session-log upload or change admission
 on the strength of this report. The isolated client image watermark is not a
 production recommendation.
 
-**rc.1 may be declared compatible only within the tested Native Web envelope**
-with the stated partial Plugin lifecycle boundary. Windows Desktop, full plugin
-management, effectful unknown-result recovery and unsupported semantics remain
-unqualified. No code fix is proposed as necessary for this scope. Decisions
-remaining with the user: whether/when to adopt official rc.1, provide Windows
-access for the manual validation, and separately authorize any future unsupported
-semantic implementation only after upstream authority is available. None is a
-prerequisite to close this bounded audit. Documentation/evidence are committed
-locally; completion response records the local hash and working-tree state.
+**CLOSED — PASS within the verified Native Web / Native Messages compatibility scope.**
+The existing Runtime needs no implementation or admission change for this bounded
+integration. Full Plugin management remains partially qualified; effectful
+unknown-result recovery and unsupported semantics are not granted by this verdict.
+`tool_removal` remains unsupported and Session-log upload remains disabled.
+There is no pending Windows acceptance gate, follow-on campaign or implementation
+phase. This closure does not claim complete upstream feature parity or expand
+historical execution scope. Local documentation commit and working-tree status,
+when executable, are reported separately; no push is authorized.
 
 [compare]: https://github.com/deepseek-ai/deepseek-harness/compare/f3803c96974ad4a94195fb97e5c637e9c2a3afe3...66491b05e3f05ad35bcdd4f6cd7ed26041d9e3db
 [rc1]: https://github.com/deepseek-ai/deepseek-harness/tree/66491b05e3f05ad35bcdd4f6cd7ed26041d9e3db

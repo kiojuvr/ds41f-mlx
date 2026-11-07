@@ -256,12 +256,18 @@ to that report.
 
 The later [official rc.1 audit/E2E](../artifacts/harness-rc1-compatibility/report.md)
 uses an isolated copy of the installed Runtime with unmodified official npm
-**0.2.2-rc.1**. The bounded Native Web lane passes, including retained images,
-stale-ID recovery after Harness restart and harmless Tool cancellation. No Runtime
+**0.2.2-rc.1**. The campaign is **CLOSED — PASS within the verified Native Web /
+Native Messages compatibility scope**: 41 real-model requests and 15 exact-ID Tool
+pairs, including retained images, stale-ID recovery after Harness restart and
+harmless Tool cancellation. No Runtime
 production configuration change is required by those results; retain `addition-only`,
 disabled Session-log upload, explicit route capacities and a Harness-supported Node
-(>=24.9). This is not Windows Desktop, complete Plugin lifecycle or runtime-restart
-Files qualification, and does not authorize promotion or admission changes.
+(>=24.9). Broader Plugin lifecycle behavior remains partially qualified;
+`tool_removal` remains unsupported. Runtime-restart Files recovery and complete
+upstream feature parity are not granted; this does not authorize promotion or
+admission changes.
+Windows Desktop-specific behavior is outside this compatibility campaign and is not included in its verdict.
+Windows testing is not a pending closure dependency; no new campaign or phase is selected.
 
 Later [Gate F0](../artifacts/harness-files/gate-f0-report.md) demonstrated bounded
 real-model official File-ID/nested-tool-result transport on macOS. The

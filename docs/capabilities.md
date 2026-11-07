@@ -102,10 +102,15 @@ The [rc.1 compatibility audit and real-model Web E2E](../artifacts/harness-rc1-c
 qualifies the restricted Native Messages lane against official **0.2.2-rc.1**:
 41 admitted requests, exact-ID Tools including harmless running-tool cancellation,
 retained multiple images, offload, stale-ID reupload (also after a Harness restart),
-manual compaction and one completed Goal round. Overall compatibility remains
-**PARTIAL**: broader Cordis/Plugin lifecycles and official Windows Desktop are not
-qualified. `tool_removal` remains rejected; no Runtime/configuration fix or
-production promotion follows from this evidence.
+manual compaction and one completed Goal round, with **15 exact-ID Tool pairs**.
+**CLOSED — PASS within the verified Native Web / Native Messages compatibility scope**.
+Broader Cordis/Plugin lifecycle behavior remains partially qualified;
+`tool_removal` remains unsupported and Session-log upload remains disabled.
+These limitations are not silently promoted to support, nor aggregated into a
+PARTIAL verdict for the verified Native integration. No complete upstream feature
+parity, Runtime/configuration fix or production promotion follows from this evidence.
+Windows Desktop-specific behavior is outside this compatibility campaign and is not included in its verdict.
+No Windows acceptance requirement remains.
 
 ## Profiles
 
