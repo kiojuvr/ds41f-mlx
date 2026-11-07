@@ -2,23 +2,20 @@
 
 **Run the official DeepSeek-V4.1-Flash checkpoint locally on Apple Silicon.**
 
-**Runtime for official Flash and Flash-1017**, sharing Recipe **0.2.0**
-native Chat/Messages semantics. Select `--checkpoint-variant flash` or `flash-1017`
-(default) during provisioning; each installation has one fixed checkpoint and
-numerical identity. Flash-1017's existing Production installation has received the
-[Multimodal-Runtime promotion](artifacts/multimodal-runtime/production-completion.md);
-original Flash is unchanged. The later [corrected-Recipe Production retry](artifacts/production-harness-alpha2-retry/report.md)
-passed installed admission and bounded real-model all-deferred, Files/Vision and
-paired continuation acceptance. The later authorized
-[Runtime-only SSE heartbeat promotion](artifacts/production-sse-heartbeat/report.md)
-installs source `960036e9` without changing Recipe, native GLM, checkpoint or client
-settings. Actual keepalive and exact-ID paired continuation pass. The acceptance
-Runtime was gracefully stopped; verified prior-package rollback remains available.
+`ds41f-mlx` is a native runtime for the official **DeepSeek-V4.1-Flash** and
+**Flash-1017** checkpoints on a **Mac Studio M3 Ultra with 512 GB unified
+memory**, serving DeepSeek's official Recipe 0.2.0 message, tool and reasoning
+semantics over Chat Completions and native Messages.
 
-`ds41f-mlx` is a native runtime targeting the **Mac Studio M3 Ultra with 512 GB
-unified memory**. It exists to combine model fidelity, correct long-context state
-and practical local inference performance—not to substitute a reduced or
-requantized model.
+Each installation is built for exactly one checkpoint variant, selected during
+provisioning with `--checkpoint-variant flash` or `flash-1017` (default). The
+installed package fixes that checkpoint, its Recipe assets and its numerical
+identity: requests cannot switch variants, and there is no cross-variant
+fallback. Flash-1017 is the current Production installation; both variants
+remain supported.
+
+It exists to combine model fidelity, correct long-context state and practical
+local inference performance—not to substitute a reduced or requantized model.
 
 The normal serving path uses **MTP (multi-token prediction)** with coherent target
 and draft-model state reuse. There is no supported non-MTP production fallback.
@@ -74,14 +71,14 @@ The following specifications describe the **ordinary default MTP path**:
 | Execution concurrency | **One native-active generation**; independent ordinary requests may queue, not batch |
 | Optional logical sessions | **16** retained conversations; streaming only; **600 s** nonbusy idle retirement |
 | Request body | **16 MiB** JSON; bytes are not a token estimate |
-| Inline Vision | Ordinary MTP: expanded prompt + reserved output ≤ checkpoint context; resource-budgeted image count. Expanded capacity is **not full-model verified**. [Bounds](docs/capabilities.md#bounded-inline-images) |
+| Inline Vision | Ordinary MTP: expanded prompt + reserved output ≤ checkpoint context; resource-budgeted image count. Expanded capacity is not model-verified. [Bounds](docs/capabilities.md#bounded-inline-images) |
 | Default endpoint | `http://127.0.0.1:8000/v1` |
 
 These are **capability ceilings, not throughput or maximum-workload guarantees**.
 Output state grows with executed tokens, not the requested output ceiling; EOS,
 tool calls and cancellation may end generation much earlier. Image limits also
 include **16 MiB encoded bytes and 4M source pixels per image**,
-Processor-planned geometry (no fixed aspect-ratio guard), and high/default/auto detail. See the
+processor-planned geometry (no fixed aspect-ratio guard), and high/default/auto detail. See the
 [complete profile and resource matrix](docs/capabilities.md) for admission,
 retention and image-continuation rules.
 
@@ -109,16 +106,13 @@ to unchanged file identities.
 
 ### 1. Provision the MTP runtime
 
-The persistent Runtime paths are below. On the project Mac Studio, **both
-installations were populated and retained after the 2026-10-22 cleanup**; skip
-provisioning for either existing installation. See the dated
-[local environment layout](docs/operations.md#local-environment-layout) for observed
-state and retained publication wheels. This filesystem/process observation is
-**not fresh admission or qualification**.
-For a fresh deployment, with the provisioning prerequisites above satisfied, choose
-one variant. Run provisioning only when both its environment and build directory
-are absent; never overwrite an existing installation. A removed build directory
-does not mean the installed Runtime needs reprovisioning.
+The persistent Runtime paths are below. **Skip provisioning when the selected
+installation already exists**: the reference Mac Studio keeps both installations,
+and [Operations](docs/operations.md#local-environment-layout) records the current
+layout. Run provisioning only when both its environment and build directory are
+absent; never overwrite an existing installation. A removed build directory does
+not mean the installed Runtime needs reprovisioning. For a fresh deployment, with
+the provisioning prerequisites above satisfied, choose one variant:
 
 Original Flash (`flash`):
 
@@ -201,14 +195,16 @@ port 8000 to the public Internet. See [operations](docs/operations.md) and
 
 ### Flash-1017: native DeepSeek Messages
 
-The primary target is **DeepSeek Harness 0.2.2-alpha.2**; earlier **0.2.1-rc.2**
-results retain their own scope. Use provider **`deepseek-official`**, adapter
+Use provider **`deepseek-official`**, adapter
 **`@deepseek-ai/dsh-llm-deepseek-api-key`**, and model **`deepseek-flash`**.
 Its base URL has **no `/v1`** (unlike generic OpenAI-compatible clients).
+Native Messages is verified within a bounded compatibility scope; see
+[Harness compatibility status](#harness-compatibility-status) and
+[Capabilities → Applications](docs/capabilities.md#applications).
 
-This is a **profile patch, not a standalone configuration or an exact acceptance
-reproduction**. Merge by entry ID into an existing official Harness profile's
-`cordis.patch.yml`; retain its plugin composition, presets and other entries.
+This is a **profile patch, not a standalone configuration**: merge by entry ID
+into an existing official Harness profile's `cordis.patch.yml`; retain its plugin
+composition, presets and other entries.
 The profile must already load the named provider, default-model and Session-log
 plugins. The patch selects the local route and explicitly chooses Thinking OFF:
 
@@ -259,69 +255,8 @@ an effort supplied by `agent-default-model` or the selected Session/model.
 Request-level effort takes precedence over the provider default. For OFF, align
 those selections with `off` (as above) or remove conflicting overrides. For
 `low`, `high` or `max`, remove `thinking: disabled` and align the provider,
-agent-default-model and Session selections. Thinking ON is implemented but does
-not inherit the bounded Thinking-OFF Harness acceptance.
-
-**Acceptance configurations are separate:** rc.2 integrated macOS acceptance used
-output **1200**, image count **3**, quantum **1**, compaction pressure **8192**,
-retention **1024**, summary cap **2048** and generic retries **zero**; see the
-[executed configuration](docs/operations.md#visual-session-capacity-and-recovery).
-Alpha.2 used output **1024**, route context **32768** and a one-image watermark to
-exercise offload; its [overlay and composed profiles](artifacts/harness-alpha2-e2e/report.md#2-isolation-configuration-and-actual-client)
-record the fixture-specific presets and command plugins. Neither set is a
-recommended production limit. **No custom Harness is required**, as demonstrated
-by these official-Harness runs; neither qualifies the Windows installer.
-
-Output/context reservations, image/offload policy, compaction, retries and timeouts
-remain user-configurable within existing Runtime admission; omitted fields above
-retain Harness/profile defaults, not newly qualified values. Prompt plus reserved
-output must fit. The installed [SSE heartbeat fix](artifacts/production-sse-heartbeat/report.md)
-addresses the diagnosed idle timeout; an extended client timeout is not a protocol
-requirement or a guarantee against absolute deadlines/network failures.
-
-### Native Messages compatibility assessment
-
-**Model-backed PASS for the tested alpha.2 configuration—not full feature parity.**
-The [isolated native E2E acceptance](artifacts/harness-alpha2-e2e/report.md) runs the
-actual official published **0.2.2-alpha.2 Web application**, `deepseek-official`
-provider, corrected Recipe and real Flash-1017: **26 native requests and 12 genuine
-exact-ID tool effects**, with canonical settlement and paired-state joins verified.
-It supplements the earlier [source compatibility audit](artifacts/harness-alpha2-compatibility/report.md)
-and rc.2 executions, rather than rewriting their historical scope.
-
-The exact source tag is **`dsh-v0.2.2-alpha.2`** /
-**`f3803c96974ad4a94195fb97e5c637e9c2a3afe3`**. Executed official npm artifacts are
-pinned separately; npm supplies no build Git SHA, so source-build byte equivalence
-is not claimed. This macOS acceptance does **not** qualify the Windows installer.
-
-| Native Messages capability | Evidence and limit |
-| --- | --- |
-| Text, client tools, exact-ID results and paired continuation | Demonstrated in bounded official rc.2 and alpha.2 runs |
-| Image offload/reacquisition and compaction | Finite rc.2 automatic-compaction workload; alpha.2 image offload, manual compaction and fresh reacquisition; not endurance qualification |
-| Browser `/goal` and manual `/compact` | Actual alpha.2 UI dispatch, one completed automatic Goal round and durable compaction followed by continuation |
-| Explicit/model Skills and catalog changes | Genuine alpha.2 Skill loading and catalog replacement demonstrated |
-| Dynamic tool additions/withdrawal and all-deferred declarations | Corrected source-retained Recipe supports all-deferred sets; genuine alpha.2 plugin-registry changes and ten all-deferred requests pass |
-| General Plugin management and MCP lifecycles | Not qualified by the representative test plugin |
-| In-history `tool_removal` | Unsupported; authoritative removal encoding is still required |
-
-The [all-deferred correction](artifacts/harness-all-deferred/report.md) is included
-in the retained Recipe patch/wheel and now explicitly installed in Flash-1017
-Production by the [authorized retry](artifacts/production-harness-alpha2-retry/report.md).
-The earlier alpha.2 acceptance retains its isolated execution identity and scope;
-it was not repeated or relabeled as Production acceptance. Its Thinking OFF / output 1024 / one-image
-watermark configuration is recorded separately from the historical rc.2 configuration.
-
-`addition-only` deactivates tools by omitting inactive declarations and filtering
-historical updates; it does **not** implement `tool_removal` and can change canonical
-prompt prefixes. No removal-specific performance improvement has been measured.
-Harness retains Session/orchestration/tool execution ownership; Session-log upload
-remains disabled. This loses server-side event ingestion/acceptance watermarks,
-not Harness's local Session persistence, Goal state or compaction. Text-only
-cancellation and a healthy new request pass in alpha.2;
-general effectful-tool cancellation/recovery remains unqualified. This assessment
-covers only `deepseek-official` → `/v1/messages`, not the separate Chat Completions
-route below. See [capabilities](docs/capabilities.md) and the acceptance report for
-complete limits and exact execution identities.
+agent-default-model and Session selections. Thinking ON is implemented but is
+not covered by the verified Thinking-OFF scope.
 
 ### Original Flash: OpenAI Chat Completions
 
@@ -330,9 +265,9 @@ Flash-1017 `deepseek-official` configuration. Select **OpenAI Chat Completions**
 (`openai-completions`), **not Anthropic Messages**, with **`/v1`** in the base URL.
 Use an alias advertised by the selected Runtime's `/v1/models`; replace the example
 model ID below if needed. This is also a **patch**, dependent on an existing
-profile that loads `llm-pi-ai`, not a standalone profile or alpha.2 Native Messages
-acceptance configuration. Merge this provider into that entry's `providers` map
-without removing other providers, then select `ds41f-local` and its model.
+profile that loads `llm-pi-ai`, not a standalone profile. Merge this provider
+into that entry's `providers` map without removing other providers, then select
+`ds41f-local` and its model.
 The context/output values shown are adjustable client declarations, not required
 compatibility values or production recommendations:
 
@@ -351,42 +286,24 @@ compatibility values or production recommendations:
             maxTokens: 32768
 ```
 
-### Compatibility limits
+### Harness compatibility status
 
-**Multimodal-Runtime is operationally complete** in the declared macOS/M3 Ultra
-512 GB, Flash-1017/native GLM/paired MTP, Recipe 0.2.0, Harness rc.2 **Thinking OFF**
-envelope. Acquisition, compatible reuse, official offload, automatic compaction,
-changed-projection reconstruction, continuation and reacquisition passed the finite
-C8 workload. The [closure contract](docs/multimodal-runtime-plan.md) and
-[installed promotion record](artifacts/multimodal-runtime/production-completion.md)
-preserve broader C2/C7/C6/C9 PARTIAL qualifications. Windows Harness qualification
-is **post-closure ordinary operational work**, not an implementation blocker.
-This does not qualify indefinite endurance, arbitrary numerical equivalence or
-general durable Files storage.
+The verified scope is official DeepSeek Harness **0.2.2-rc.1** on the Native Web /
+Native Messages route: text, generic client tools with exact-ID results, paired
+continuation, bounded inline images and process-local Files—including image
+offload, reacquisition, manual and automatic compaction and retained images
+across a Harness restart. In-history `tool_removal`, Session-log upload and
+general Plugin/MCP lifecycle coverage remain unsupported or partial. This is not
+complete upstream feature parity and requires no custom Harness; see
+[Capabilities](docs/capabilities.md#applications) and
+[qualification](docs/qualification.md) for the executed scope, and
+[Current limitations](#current-limitations) for the Runtime boundary.
 
-The earlier completed Visual Feedback Loop milestone has bounded **macOS/M3 Ultra 512 GB,
-Harness 0.2.1-rc.2, Recipe 0.2.0, original Flash-1017, Thinking OFF/native paired
-MTP/GLM** evidence. [Phase 3](artifacts/visual-feedback-loop/phase-3-report.md)
-used Files-to-inline fallback and did not qualify Files. Later
-[Gate F0](artifacts/harness-files/gate-f0-report.md) demonstrated real-model
-official File-ID/nested-tool-result transport. The
-[repaired loop](artifacts/repaired-visual-loop/report.md) completed **27 native
-generations**, **six screenshot-verified correction cycles**, **seven distinct
-Vision encodes** and **85 historical-image occurrence reuses**. Eight distinct
-screenshots transferred through Files; the eighth was not executed by the model.
-Independent final visual evaluation improved **4/9 → 8/9**, with a remaining
-**29px grid discrepancy**. Overall qualification is **PARTIAL**: request 28 failed
-before inference at conditional paired-byte admission, with the exact byte
-subcondition unrecorded. Those qualification-era byte ceilings were later
-removed by the [paired-byte bugfix](artifacts/paired-byte-qualification/report.md);
-this does not retroactively complete that historical loop. Long-term arbitrary-image
-continuity, full official Files/document lifecycle compatibility, persistent Files storage, PDF ingestion,
-Chromium inside Seatbelt and Windows image workflows are not qualified.
-Runtime supports **bounded inline Vision for both variants**. Server-side
-tools, unsupported Messages extensions, multi-active inference and restart-persistent
-KV-cache restoration are unsupported; parallel subagent workflows remain unqualified.
-Broad Windows Harness compatibility for original Flash remains unqualified.
-See [capability boundaries](docs/capabilities.md).
+Long silent phases emit SSE keepalive comments, so an extended client timeout is
+not a protocol requirement; absolute deadlines and network failures still apply.
+Output/context reservations, image/offload policy, compaction, retries and
+timeouts remain user-configurable within Runtime admission. Prompt plus reserved
+output must fit.
 
 ## APIs and applications
 
@@ -457,9 +374,10 @@ closed. No automatic fallback, model switching or installation migration occurs.
 | --- | --- |
 | `mtp-serving-v1` | Normal CLI/TUI default; Chat Completions and Recipe 0.2 Messages, bounded inline Vision, tools and paired reuse; optional logical sessions are Chat-only; no native restart restore |
 
-Both checkpoint variants default to **GLM native**. GLM portable is a separately
-admitted, explicitly provisioned alternative—not a request option or fallback on
-native admission failure. Distribution identity is distinct from serving profile.
+Both checkpoint variants default to the **GLM native** execution distribution.
+GLM portable is a separately admitted, explicitly provisioned alternative
+(`--glm-profile portable`)—not a request option or fallback on native admission
+failure. Distribution identity is distinct from serving profile.
 See [Capabilities](docs/capabilities.md) and [distribution admission](docs/runtime-admission.md#glm-execution-distributions).
 
 The specialized opt-in [`mtp-singleton-v1`](docs/mtp-local-release-candidate.md)
@@ -501,23 +419,36 @@ single observations, not an SLA or a latency guarantee at the context ceiling.
 
 ## Current limitations
 
+**Vision and Files are bounded, not general multimodal inference.** The supported
+envelope is macOS/M3 Ultra 512 GB, Flash-1017, native GLM, paired MTP, Recipe
+0.2.0 and Thinking OFF; the [Multimodal Runtime
+contract](docs/multimodal-runtime-plan.md) and
+[completion record](artifacts/multimodal-runtime/production-completion.md) record
+its exact limits. Indefinite endurance, arbitrary numerical equivalence,
+general durable Files storage, long-term arbitrary-image continuity, PDF ingestion
+and Windows image workflows are not qualified. Runtime supports **bounded inline
+Vision for both variants**; server-side tools, unsupported Messages extensions,
+multi-active inference and restart-persistent KV-cache restoration are
+unsupported, and parallel subagent workflows remain unqualified. Broad Windows
+Harness compatibility for original Flash remains unqualified. See
+[capability boundaries](docs/capabilities.md).
+
 - Supported deployment is limited to the stated model/host and a single operator
   locally or on a trusted private LAN: no Internet/hostile-network security,
   multi-user service, distributed inference or multi-active/shared native batching.
 - No MTP native persistence, restart recovery, transparent replay/resume or
   cross-backend KV portability. Logical conversations are not durable sessions.
 - Messages supports bounded inline base64 images and process-local image Files
-  upload/list/delete with File-ID resolution in current source and promoted
-  Flash-1017 Production. This is not PDF/document ingestion, persistent
-  attachment storage or full official Files lifecycle compatibility. The bounded
-  macOS Files/Vision evidence above is not general Harness compatibility or
-  long-term arbitrary-image continuity qualification.
-  No remote/file image URLs, low-detail images,
-  animations or universal multimodal/visual-quality claim. MTP prior-message
-  images use compatible complete paired coverage or bounded independent Messages
-  reconstruction at C=0 / whole-image-safe C>0 with available sources and admitted
-  fresh work. Image intersections, missing bytes and unsupported discount cases
-  safely refuse. No historical tool replay or lost exact Chat-lease recovery.
+  upload/list/delete with File-ID resolution in current source and in the
+  Flash-1017 Production installation. This is not PDF/document ingestion,
+  persistent attachment storage or full official Files lifecycle compatibility,
+  and is not general Harness compatibility or long-term arbitrary-image
+  continuity qualification. There are no remote/file image URLs, low-detail
+  images, animations or universal visual-quality claims. Prior-message images are
+  reused only through compatible complete paired coverage or bounded Messages
+  reconstruction from available sources; incompatible image reuse is refused
+  rather than approximated. No historical tool replay or lost exact Chat-lease
+  recovery.
 - No sessionized Responses/Messages, arbitrary server-side tool executor,
   crash-safe/distributed exactly-once effects or universal-client compatibility.
   Partial SSE and HTTP success are not canonical-state acknowledgements or

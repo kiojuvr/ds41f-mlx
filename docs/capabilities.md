@@ -402,7 +402,7 @@ and [original image qualification](multimodal-production-qualification.md).
   unknown. Neither correction retroactively completes this loop or qualifies
   Windows Harness workflows. This does not qualify eight-image execution,
   long-term arbitrary-image continuity or general Files/document lifecycle.
-  Current checkpoint-specific setup and later Windows observations are in
+  Current checkpoint-specific setup is in
   [Using DeepSeek Harness](../README.md#using-deepseek-harness).
   This historical observation is not comprehensive Agent/Harness compatibility;
   no replacement Harness is bundled or process-managed by the TUI.
